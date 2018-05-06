@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+    crossorigin="anonymous">
+
+  <title>Számológép</title>
+
+  <style>
+    h1,
+    .button-wrapper,
+    .operand-wrapper {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Számológép</h1>
+
+    <!-- szám gombok -->
+    <div class="button-wrapper">
+      <button id="button0">0</button>
+      <button id="button1">1</button>
+      <button id="button2">2</button>
+      <button id="button3">3</button>
+      <button id="button4">4</button>
+      <button id="button5">5</button>
+      <button id="button6">6</button>
+      <button id="button7">7</button>
+      <button id="button8">8</button>
+      <button id="button9">9</button>
+    </div>
+
+    <!-- mvelet gombok -->
+    <div class="operand-wrapper">
+      <button id="buttonAdd">+</button>
+      <button id="buttonMinus">-</button>
+      <button id="buttonTimes">*</button>
+      <button id="buttonDivide">/</button>
+      <button id="buttonEquals">=</button>
+      <button id="buttonC">C</button>
+      <button id="buttonDecimal">,</button>
+    </div>
+
+    <!-- kijelző -->
+    <div>
+      <h3 id="displayNumberResult">0</h3>
+    </div>
+    <div class="display-wrapper">
+      <span id="displayNumberFormula"></span>
+    </div>
+  </div>
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <script src="calculator.js"></script>
+</body>
+
+</html>

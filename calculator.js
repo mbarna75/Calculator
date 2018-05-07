@@ -9,12 +9,15 @@ const STATUS_DONE = 'done';
 
 let numberResult = null;
 let numberFormula = null;
+let decimalResult = [];
 let operand = null;
 let status = STATUS_ADDNUM;
 let formular = [];
 let result = 0;
 let lastNumber = 0;
 let decimals = 1;
+let power = 0;
+let decimal = 0;
 
 // Elemek összegyűjtése
 
@@ -75,6 +78,7 @@ function OnNumberClick() {
     // Értékek összegyűjtése
     let currentButton = this;
     let currentNumber = +currentButton.innerText;
+    let currentDecimal = currentButton.innerText;
 
     // Állapot elágazás
     switch (status) {
@@ -84,8 +88,12 @@ function OnNumberClick() {
             break;
 
         case STATUS_DECIMAL:
-            decimals = decimals * 10;
-            SetNumberResult(numberResult + (currentNumber / decimals));
+            decimalResult.push(currentDecimal);
+            displayNumberResult.innerText = numberResult + '.' + (decimalResult.join(''));
+            decimal = (decimalResult.join(''));
+            power = (decimalResult.join('')).length;
+            power = -power;
+            decimal = decimal * Math.pow(10, power);
             break;
 
         case STATUS_OPERAND:
@@ -125,6 +133,7 @@ function OnOperandClick() {
 
         case STATUS_DECIMAL:
             decimals = 1;
+            numberResult = numberResult + decimal;
             formular.push(numberResult);
             formular.push(currentOperand);
             displayNumberFormula.innerText = formular.join(' ');
@@ -133,6 +142,10 @@ function OnOperandClick() {
             SetNumberFormula(numberResult);
             SetOperand(currentOperand);
             status = STATUS_OPERAND;
+            decimal = 0;
+            power = 0;
+            decimalResult = [];
+            
             break;
 
         case STATUS_OPERAND:
@@ -163,6 +176,9 @@ function OnCClick() {
     SetOperand(null);
     SetNumberFormula(null);
     displayNumberFormula.innerText = null;
+    decimal = 0;
+    power = 0;
+    decimalResult = [];
     status = STATUS_ADDNUM;
     decimals = 1;
 }
@@ -172,6 +188,7 @@ function OnEqualClick() {
     if (status == STATUS_DONE) {
         result = eval(numberResult + operand + lastNumber);
     } else {
+        numberResult = numberResult + decimal;
         result = eval(numberFormula + operand + numberResult);
         lastNumber = numberResult;
         status = STATUS_DONE;
@@ -184,8 +201,12 @@ function OnEqualClick() {
 
 // Reagálás , gombra
 function OnDecimalClick() {
+    let currentButton = this;
+    let currentDecimal = currentButton.innerText;
     switch (status) {
         case STATUS_ADDNUM:
+            if (numberResult == null) { numberResult = 0 }
+            displayNumberResult.innerText = numberResult + '.';
             status = STATUS_DECIMAL;
             break;
 

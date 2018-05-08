@@ -51,6 +51,7 @@ let buttonC = document.getElementById('buttonC');
 let buttonDecimal = document.getElementById('buttonDecimal');
 
 // Eseményre feliratkozások
+addEventListener('keyup', KeyPress);
 button0.addEventListener('click', OnNumberClick);
 button1.addEventListener('click', OnNumberClick);
 button2.addEventListener('click', OnNumberClick);
@@ -72,6 +73,7 @@ buttonEquals.addEventListener('click', OnEqualClick);
 buttonC.addEventListener('click', OnCClick);
 
 buttonDecimal.addEventListener('click', OnDecimalClick);
+
 
 // Reagálás szám gombokra
 function OnNumberClick() {
@@ -276,4 +278,29 @@ function SetNumberFormula(value) {
 
 function SetOperand(value) {
     operand = value;
+}
+
+function KeyPress(pressed) {
+    const keyPressed = pressed.key;
+    
+    if (keyPressed == "0") {button0.click()};
+    if (keyPressed == "1") {button1.click()};
+    if (keyPressed == "2") {button2.click()};
+    if (keyPressed == "3") {button3.click()};
+    if (keyPressed == "4") {button4.click()};
+    if (keyPressed == "5") {button5.click()};
+    if (keyPressed == "6") {button6.click()};
+    if (keyPressed == "7") {button7.click()};
+    if (keyPressed == "8") {button8.click()};
+    if (keyPressed == "9") {button9.click()};
+    if (keyPressed == "+") {buttonAdd.click()};
+    if (keyPressed == "-") {buttonMinus.click()};
+    if (keyPressed == "*") {buttonTimes.click()};
+    if (keyPressed == "/") {buttonDivide.click()};
+    if (keyPressed == "=") {buttonEquals.click()};
+    if (keyPressed == "Enter") {buttonEquals.click()};
+    if (keyPressed == "c") {buttonC.click()};
+    if (keyPressed == "C") {buttonC.click()};
+    if (keyPressed == ".") {buttonDecimal.click()};
+    if (keyPressed == ",") {buttonDecimal.click()};
 }

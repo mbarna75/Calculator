@@ -1,13 +1,11 @@
 // Konstansok
-
 const STATUS_ADDNUM = 'addnum';
 const STATUS_DECIMAL = 'decimal';
 const STATUS_OPERAND = 'operand';
 const STATUS_DONE = 'done';
 
 // Általános változók
-
-let numberResult = null;
+let numberResult = 0;
 let numberFormula = null;
 let decimalResult = [];
 let operand = null;
@@ -15,9 +13,12 @@ let status = STATUS_ADDNUM;
 let formular = [];
 let result = 0;
 let lastNumber = 0;
-let decimals = 1;
 let power = 0;
 let decimal = 0;
+let currentButton = '';
+let currentNumber = '';
+let currentDecimal = '';
+let currentOperand = '';
 
 // Elemek összegyűjtése
 
@@ -50,7 +51,6 @@ let buttonC = document.getElementById('buttonC');
 let buttonDecimal = document.getElementById('buttonDecimal');
 
 // Eseményre feliratkozások
-
 button0.addEventListener('click', OnNumberClick);
 button1.addEventListener('click', OnNumberClick);
 button2.addEventListener('click', OnNumberClick);
@@ -76,13 +76,12 @@ buttonDecimal.addEventListener('click', OnDecimalClick);
 // Reagálás szám gombokra
 function OnNumberClick() {
     // Értékek összegyűjtése
-    let currentButton = this;
-    let currentNumber = +currentButton.innerText;
-    let currentDecimal = currentButton.innerText;
+    currentButton = this;
+    currentNumber = +currentButton.innerText;
+    currentDecimal = currentButton.innerText;
 
     // Állapot elágazás
     switch (status) {
-
         case STATUS_ADDNUM:
             SetNumberResult(numberResult * 10 + currentNumber);
             break;
@@ -90,20 +89,16 @@ function OnNumberClick() {
         case STATUS_DECIMAL:
             decimalResult.push(currentDecimal);
             displayNumberResult.innerText = numberResult + '.' + (decimalResult.join(''));
-            decimal = (decimalResult.join(''));
-            power = (decimalResult.join('')).length;
-            power = -power;
-            decimal = decimal * Math.pow(10, power);
             break;
 
         case STATUS_OPERAND:
-            numberResult = null;
+            numberResult = 0;
             SetNumberResult(numberResult * 10 + currentNumber);
             status = STATUS_ADDNUM;
             break;
 
         case STATUS_DONE:
-            numberResult = null;
+            numberResult = 0;
             SetOperand(null);
             SetNumberFormula(null);
             SetNumberResult(numberResult * 10 + currentNumber);
@@ -115,41 +110,22 @@ function OnNumberClick() {
 // Reagálás művelet gombokra
 function OnOperandClick() {
     // Értékek összegyűjtése
-    let currentButton = this;
-    let currentOperand = currentButton.innerText;
+    currentButton = this;
+    currentOperand = currentButton.innerText;
 
     // Állapot elágazás
     switch (status) {
         case STATUS_ADDNUM:
-            formular.push(numberResult);
-            formular.push(currentOperand);
-            displayNumberFormula.innerText = formular.join(' ');
-            result = eval(numberFormula + operand + numberResult);
-            SetNumberResult(result);
-            SetNumberFormula(numberResult);
-            SetOperand(currentOperand);
-            status = STATUS_OPERAND;
+            FormularArrayLoad();
             break;
 
         case STATUS_DECIMAL:
-            decimals = 1;
-            numberResult = numberResult + decimal;
-            formular.push(numberResult);
-            formular.push(currentOperand);
-            displayNumberFormula.innerText = formular.join(' ');
-            result = eval(numberFormula + operand + numberResult);
-            SetNumberResult(result);
-            SetNumberFormula(numberResult);
-            SetOperand(currentOperand);
-            status = STATUS_OPERAND;
-            decimal = 0;
-            power = 0;
-            decimalResult = [];
-            
+            DecimalResult();
+            FormularArrayLoad();
+            DecimalClear();
             break;
 
         case STATUS_OPERAND:
-            decimals = 1;
             formular.pop();
             formular.push(currentOperand);
             displayNumberFormula.innerText = formular.join(' ');
@@ -157,7 +133,6 @@ function OnOperandClick() {
             break;
 
         case STATUS_DONE:
-            decimals = 1;
             formular.push(numberResult);
             formular.push(currentOperand);
             displayNumberFormula.innerText = formular.join(' ');
@@ -176,36 +151,78 @@ function OnCClick() {
     SetOperand(null);
     SetNumberFormula(null);
     displayNumberFormula.innerText = null;
-    decimal = 0;
-    power = 0;
-    decimalResult = [];
+    DecimalClear();
     status = STATUS_ADDNUM;
-    decimals = 1;
 }
 
 // Reagálás = gombra
 function OnEqualClick() {
-    if (status == STATUS_DONE) {
-        result = eval(numberResult + operand + lastNumber);
-    } else {
-        numberResult = numberResult + decimal;
-        result = eval(numberFormula + operand + numberResult);
-        lastNumber = numberResult;
-        status = STATUS_DONE;
+    switch (status) {
+        case STATUS_ADDNUM:
+            if (formular.length == 0) {
+                break;
+            } else {
+                result = eval(numberFormula + operand + numberResult);
+                lastNumber = numberResult;
+                status = STATUS_DONE;
+                SetNumberResult(result);
+                displayNumberFormula.innerText = null;
+                DecimalClear();
+                formular = [];
+                break;
+            }
+        case STATUS_DECIMAL:
+            if (formular.length == 0) {
+                break;
+            } else {
+                DecimalResult();
+                result = eval(numberFormula + operand + numberResult);
+                lastNumber = numberResult;
+                status = STATUS_DONE;
+                SetNumberResult(result);
+                displayNumberFormula.innerText = null;
+                DecimalClear();
+                formular = [];
+                break;
+            }
+
+        case STATUS_OPERAND:
+            numberResult = numberResult + decimal;
+            result = eval(numberFormula + operand + numberResult);
+            lastNumber = numberResult;
+            status = STATUS_DONE;
+            SetNumberResult(result);
+            displayNumberFormula.innerText = null;
+            DecimalClear();
+            formular = [];
+            break;
+
+        case STATUS_DONE:
+            result = eval(numberResult + operand + lastNumber);
+            SetNumberResult(result);
+            displayNumberFormula.innerText = null;
+            DecimalClear();
+            formular = [];
+            break;
     }
-    SetNumberResult(result);
-    displayNumberFormula.innerText = null;
-    formular = [];
-    decimals = 1;
 }
 
 // Reagálás , gombra
 function OnDecimalClick() {
-    let currentButton = this;
-    let currentDecimal = currentButton.innerText;
+    currentButton = this;
+    currentDecimal = currentButton.innerText;
     switch (status) {
         case STATUS_ADDNUM:
-            if (numberResult == null) { numberResult = 0 }
+            displayNumberResult.innerText = numberResult + '.';
+            status = STATUS_DECIMAL;
+            break;
+
+        case STATUS_DECIMAL:
+            break;
+
+        case STATUS_OPERAND:
+            SetNumberResult(0);
+            DecimalClear();
             displayNumberResult.innerText = numberResult + '.';
             status = STATUS_DECIMAL;
             break;
@@ -216,12 +233,35 @@ function OnDecimalClick() {
             SetNumberFormula(null);
             status = STATUS_DECIMAL;
             break;
-
-        case STATUS_OPERAND:
-            SetNumberResult(0);
-            status = STATUS_DECIMAL;
-            break;
     }
+}
+
+// Tizedesjegyek kigyűjtése
+function DecimalResult() {
+    decimal = (decimalResult.join(''));
+    power = (decimalResult.join('')).length;
+    power = -power;
+    decimal = decimal * Math.pow(10, power);
+    numberResult = numberResult + decimal;
+}
+
+// Képlettömb feltöltés
+function FormularArrayLoad() {
+    formular.push(numberResult);
+    formular.push(currentOperand);
+    displayNumberFormula.innerText = formular.join(' ');
+    result = eval(numberFormula + operand + numberResult);
+    SetNumberResult(result);
+    SetNumberFormula(numberResult);
+    SetOperand(currentOperand);
+    status = STATUS_OPERAND;
+}
+
+// Tizedes változók törlése
+function DecimalClear() {
+    decimal = 0;
+    power = 0;
+    decimalResult = [];
 }
 
 // Értékbeállító függvények
